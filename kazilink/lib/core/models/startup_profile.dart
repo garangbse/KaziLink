@@ -23,5 +23,3 @@ class StartupProfile {
 
   bool get verified => verificationStatus == StartupVerificationStatus.verified;
 }
-
-

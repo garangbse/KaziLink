@@ -38,17 +38,26 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text('Create account', style: Theme.of(context).textTheme.displaySmall?.copyWith(fontWeight: FontWeight.w800)),
+                  Text(
+                    'Create account',
+                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     'Create your KaziLink account to access internships and startup opportunities.',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.black54),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyLarge?.copyWith(color: Colors.black54),
                   ),
                   const SizedBox(height: 24),
                   TextField(
                     controller: _emailController,
                     keyboardType: TextInputType.emailAddress,
-                    decoration: const InputDecoration(labelText: 'Email address'),
+                    decoration: const InputDecoration(
+                      labelText: 'Email address',
+                    ),
                   ),
                   const SizedBox(height: 12),
                   TextField(
@@ -60,7 +69,9 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                   TextField(
                     controller: _confirmPasswordController,
                     obscureText: true,
-                    decoration: const InputDecoration(labelText: 'Confirm password'),
+                    decoration: const InputDecoration(
+                      labelText: 'Confirm password',
+                    ),
                   ),
                   const SizedBox(height: 20),
                   FilledButton(
@@ -69,25 +80,33 @@ class _SignUpScreenState extends ConsumerState<SignUpScreen> {
                         : () async {
                             final email = _emailController.text.trim();
                             final password = _passwordController.text.trim();
-                            final confirmPassword = _confirmPasswordController.text.trim();
+                            final confirmPassword = _confirmPasswordController
+                                .text
+                                .trim();
 
                             if (password != confirmPassword) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Passwords do not match')),
+                                const SnackBar(
+                                  content: Text('Passwords do not match'),
+                                ),
                               );
                               return;
                             }
 
-                            await ref.read(authControllerProvider.notifier).signUp(
-                                  email: email,
-                                  password: password,
-                                );
+                            await ref
+                                .read(authControllerProvider.notifier)
+                                .signUp(email: email, password: password);
                           },
-                    child: authState.isLoading ? const CircularProgressIndicator() : const Text('Sign up'),
+                    child: authState.isLoading
+                        ? const CircularProgressIndicator()
+                        : const Text('Sign up'),
                   ),
                   if (authState.errorMessage != null) ...[
                     const SizedBox(height: 12),
-                    Text(authState.errorMessage!, style: const TextStyle(color: Colors.red)),
+                    Text(
+                      authState.errorMessage!,
+                      style: const TextStyle(color: Colors.red),
+                    ),
                   ],
                 ],
               ),

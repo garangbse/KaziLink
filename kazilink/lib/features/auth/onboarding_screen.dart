@@ -35,19 +35,31 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text('Complete your profile', style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800)),
+                  Text(
+                    'Complete your profile',
+                    style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     'Choose the role that matches how you will use KaziLink so the platform can personalize your experience.',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.black54),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyLarge?.copyWith(color: Colors.black54),
                   ),
                   const SizedBox(height: 24),
                   TextField(
                     controller: _nameController,
-                    decoration: const InputDecoration(labelText: 'Display name'),
+                    decoration: const InputDecoration(
+                      labelText: 'Display name or startup name',
+                    ),
                   ),
                   const SizedBox(height: 16),
-                  Text('Select your role', style: Theme.of(context).textTheme.titleMedium),
+                  Text(
+                    'Select your role',
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
                   const SizedBox(height: 12),
                   Wrap(
                     spacing: 10,
@@ -64,21 +76,28 @@ class _OnboardingScreenState extends ConsumerState<OnboardingScreen> {
                   const SizedBox(height: 16),
                   Text(
                     switch (_selectedRole) {
-                      UserRole.student => 'Discover and apply for internships and project-based roles.',
-                      UserRole.startupFounder => 'Post opportunities and verify startup needs.',
-                      UserRole.startupTeam => 'Manage applications and applicant workflows.',
+                      UserRole.student =>
+                        'Discover and apply for internships and project-based roles.',
+                      UserRole.startup =>
+                        'Create opportunities and review student applications.',
                     },
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black54),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyMedium?.copyWith(color: Colors.black54),
                   ),
                   const SizedBox(height: 12),
                   FilledButton(
                     onPressed: authState.isLoading
                         ? null
-                        : () => ref.read(authControllerProvider.notifier).completeOnboarding(
-                              displayName: _nameController.text.trim(),
-                              role: _selectedRole,
-                            ),
-                    child: authState.isLoading ? const CircularProgressIndicator() : const Text('Finish onboarding'),
+                        : () => ref
+                              .read(authControllerProvider.notifier)
+                              .completeOnboarding(
+                                displayName: _nameController.text.trim(),
+                                role: _selectedRole,
+                              ),
+                    child: authState.isLoading
+                        ? const CircularProgressIndicator()
+                        : const Text('Finish onboarding'),
                   ),
                 ],
               ),

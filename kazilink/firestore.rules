@@ -1,0 +1,55 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function userProfile(uid) {
+      return get(/databases/$(database)/documents/users/$(uid));
+    }
+
+    function roleIs(role) {
+      return signedIn() && userProfile(request.auth.uid).data.role == role;
+    }
+
+    function ownsStudentApplication() {
+      return signedIn() && resource.data.studentId == request.auth.uid;
+    }
+
+    function ownsStartupApplication() {
+      return signedIn() && resource.data.startupId == request.auth.uid;
+    }
+
+    match /users/{userId} {
+      allow create: if signedIn() && request.auth.uid == userId;
+      allow read, update: if signedIn() && request.auth.uid == userId;
+
+      match /bookmarks/{opportunityId} {
+        allow read, create, update, delete: if signedIn() && request.auth.uid == userId;
+      }
+    }
+
+    match /startups/{startupId} {
+      allow read: if signedIn();
+      allow create, update: if roleIs('startup') && request.auth.uid == startupId;
+    }
+
+    match /opportunities/{opportunityId} {
+      allow read: if signedIn();
+      allow create: if roleIs('startup') && request.resource.data.startupId == request.auth.uid;
+      allow update, delete: if roleIs('startup') && resource.data.startupId == request.auth.uid;
+    }
+
+    match /applications/{applicationId} {
+      allow read: if ownsStudentApplication() || ownsStartupApplication();
+      allow create: if roleIs('student') && request.resource.data.studentId == request.auth.uid;
+      allow update: if roleIs('startup') &&
+        resource.data.startupId == request.auth.uid &&
+        request.resource.data.diff(resource.data).changedKeys().hasOnly(['status', 'updatedAt']) &&
+        request.resource.data.status in ['Accepted', 'Rejected', 'Under review'];
+      allow delete: if false;
+    }
+  }
+}

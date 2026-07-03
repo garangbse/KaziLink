@@ -11,9 +11,9 @@ class AuthState {
   });
 
   const AuthState.unknown()
-      : isLoading = true,
-        user = null,
-        errorMessage = null;
+    : isLoading = true,
+      user = null,
+      errorMessage = null;
 
   final bool isLoading;
   final UserProfile? user;
@@ -35,9 +35,11 @@ class AuthState {
   }
 }
 
-final authControllerProvider = StateNotifierProvider<AuthController, AuthState>((ref) {
-  return AuthController(ref)..loadSession();
-});
+final authControllerProvider = StateNotifierProvider<AuthController, AuthState>(
+  (ref) {
+    return AuthController(ref)..loadSession();
+  },
+);
 
 class AuthController extends StateNotifier<AuthState> {
   AuthController(this._ref) : super(const AuthState.unknown());
@@ -49,31 +51,50 @@ class AuthController extends StateNotifier<AuthState> {
       final user = await _ref.read(authRepositoryProvider).loadCurrentUser();
       state = AuthState(isLoading: false, user: user, errorMessage: null);
     } catch (error) {
-      state = AuthState(isLoading: false, user: null, errorMessage: error.toString());
+      state = AuthState(
+        isLoading: false,
+        user: null,
+        errorMessage: error.toString(),
+      );
     }
   }
 
   Future<void> signIn({required String email, required String password}) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
-      final user = await _ref.read(authRepositoryProvider).signIn(email: email, password: password);
+      final user = await _ref
+          .read(authRepositoryProvider)
+          .signIn(email: email, password: password);
       state = AuthState(isLoading: false, user: user, errorMessage: null);
     } catch (error) {
-      state = AuthState(isLoading: false, user: null, errorMessage: error.toString());
+      state = AuthState(
+        isLoading: false,
+        user: null,
+        errorMessage: error.toString(),
+      );
     }
   }
 
   Future<void> signUp({required String email, required String password}) async {
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
-      final user = await _ref.read(authRepositoryProvider).signUp(email: email, password: password);
+      final user = await _ref
+          .read(authRepositoryProvider)
+          .signUp(email: email, password: password);
       state = AuthState(isLoading: false, user: user, errorMessage: null);
     } catch (error) {
-      state = AuthState(isLoading: false, user: null, errorMessage: error.toString());
+      state = AuthState(
+        isLoading: false,
+        user: null,
+        errorMessage: error.toString(),
+      );
     }
   }
 
-  Future<void> completeOnboarding({required String displayName, required UserRole role}) async {
+  Future<void> completeOnboarding({
+    required String displayName,
+    required UserRole role,
+  }) async {
     final currentUser = state.user;
     if (currentUser == null) {
       return;
@@ -81,14 +102,20 @@ class AuthController extends StateNotifier<AuthState> {
 
     state = state.copyWith(isLoading: true, errorMessage: null);
     try {
-      final user = await _ref.read(authRepositoryProvider).completeOnboarding(
+      final user = await _ref
+          .read(authRepositoryProvider)
+          .completeOnboarding(
             user: currentUser,
             displayName: displayName,
             role: role,
           );
       state = AuthState(isLoading: false, user: user, errorMessage: null);
     } catch (error) {
-      state = AuthState(isLoading: false, user: currentUser, errorMessage: error.toString());
+      state = AuthState(
+        isLoading: false,
+        user: currentUser,
+        errorMessage: error.toString(),
+      );
     }
   }
 

@@ -1,11 +1,10 @@
-enum UserRole { student, startupFounder, startupTeam }
+enum UserRole { student, startup }
 
 extension UserRoleX on UserRole {
   String get label => switch (this) {
-        UserRole.student => 'Student',
-        UserRole.startupFounder => 'Startup Founder',
-        UserRole.startupTeam => 'Startup Team',
-      };
+    UserRole.student => 'Student',
+    UserRole.startup => 'Startup',
+  };
 }
 
 class UserProfile {

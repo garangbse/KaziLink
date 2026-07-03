@@ -25,9 +25,13 @@ class OpportunityScreen extends ConsumerWidget {
                 prefixIcon: const Icon(Icons.search),
                 filled: true,
                 fillColor: Colors.white,
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(18), borderSide: BorderSide.none),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(18),
+                  borderSide: BorderSide.none,
+                ),
               ),
-              onChanged: (value) => ref.read(searchQueryProvider.notifier).state = value,
+              onChanged: (value) =>
+                  ref.read(searchQueryProvider.notifier).state = value,
             ),
             const SizedBox(height: 12),
             SizedBox(
@@ -35,13 +39,17 @@ class OpportunityScreen extends ConsumerWidget {
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
-                  final item = index == 0 ? null : OpportunityCategory.values[index - 1];
+                  final item = index == 0
+                      ? null
+                      : OpportunityCategory.values[index - 1];
                   final selected = item == category;
                   final label = index == 0 ? 'All' : item!.label;
                   return ChoiceChip(
                     label: Text(label),
                     selected: selected,
-                    onSelected: (_) => ref.read(selectedCategoryProvider.notifier).state = item,
+                    onSelected: (_) =>
+                        ref.read(selectedCategoryProvider.notifier).state =
+                            item,
                   );
                 },
                 separatorBuilder: (_, _) => const SizedBox(width: 8),
@@ -53,18 +61,28 @@ class OpportunityScreen extends ConsumerWidget {
               child: opportunitiesAsync.when(
                 data: (opportunities) {
                   final filtered = opportunities.where((opportunity) {
-                    final matchesQuery = query.isEmpty ||
-                        opportunity.title.toLowerCase().contains(query.toLowerCase()) ||
-                        opportunity.startupName.toLowerCase().contains(query.toLowerCase()) ||
-                        opportunity.skills.any((skill) => skill.toLowerCase().contains(query.toLowerCase()));
-                    final matchesCategory = category == null || opportunity.category == category;
+                    final matchesQuery =
+                        query.isEmpty ||
+                        opportunity.title.toLowerCase().contains(
+                          query.toLowerCase(),
+                        ) ||
+                        opportunity.startupName.toLowerCase().contains(
+                          query.toLowerCase(),
+                        ) ||
+                        opportunity.skills.any(
+                          (skill) =>
+                              skill.toLowerCase().contains(query.toLowerCase()),
+                        );
+                    final matchesCategory =
+                        category == null || opportunity.category == category;
                     return matchesQuery && matchesCategory;
                   }).toList();
 
                   if (filtered.isEmpty) {
                     return const StateCard(
                       title: 'No roles match your search',
-                      subtitle: 'Try a different keyword or clear the category filter.',
+                      subtitle:
+                          'Try a different keyword or clear the category filter.',
                       icon: Icons.manage_search,
                     );
                   }
@@ -72,7 +90,8 @@ class OpportunityScreen extends ConsumerWidget {
                   return ListView.separated(
                     itemCount: filtered.length,
                     separatorBuilder: (_, _) => const SizedBox(height: 12),
-                    itemBuilder: (context, index) => OpportunityCard(opportunity: filtered[index]),
+                    itemBuilder: (context, index) =>
+                        OpportunityCard(opportunity: filtered[index]),
                   );
                 },
                 loading: () => const LoadingCard(height: 180),

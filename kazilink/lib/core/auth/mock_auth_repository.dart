@@ -11,7 +11,10 @@ class MockAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<UserProfile> signUp({required String email, required String password}) async {
+  Future<UserProfile> signUp({
+    required String email,
+    required String password,
+  }) async {
     await Future<void>.delayed(const Duration(milliseconds: 300));
     _currentUser = UserProfile(
       id: 'alu-demo-user',
@@ -26,7 +29,10 @@ class MockAuthRepository implements AuthRepository {
   }
 
   @override
-  Future<UserProfile> signIn({required String email, required String password}) async {
+  Future<UserProfile> signIn({
+    required String email,
+    required String password,
+  }) async {
     await Future<void>.delayed(const Duration(milliseconds: 300));
     _currentUser = UserProfile(
       id: 'alu-demo-student',

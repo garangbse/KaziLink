@@ -9,6 +9,8 @@ import '../models/application_record.dart';
 import '../models/opportunity.dart';
 import '../models/opportunity_category.dart';
 import '../models/startup_profile.dart';
+import '../models/user_profile.dart';
+import '../auth/auth_controller.dart';
 
 final authRepositoryProvider = Provider<AuthRepository>((ref) {
   return FirebaseAuthRepository();
@@ -26,12 +28,34 @@ final opportunitiesProvider = FutureProvider<List<Opportunity>>((ref) async {
   return ref.watch(opportunityRepositoryProvider).fetchOpportunities();
 });
 
-final applicationsProvider = FutureProvider<List<ApplicationRecord>>((ref) async {
-  return ref.watch(opportunityRepositoryProvider).fetchApplications();
+final applicationsProvider = FutureProvider<List<ApplicationRecord>>((
+  ref,
+) async {
+  final user = ref.watch(authControllerProvider).user;
+  if (user == null) {
+    return const [];
+  }
+  return ref.watch(opportunityRepositoryProvider).fetchApplications(user);
+});
+
+final startupOpportunitiesProvider = FutureProvider<List<Opportunity>>((
+  ref,
+) async {
+  final user = ref.watch(authControllerProvider).user;
+  if (user == null || user.role != UserRole.startup) {
+    return const [];
+  }
+  return ref
+      .watch(opportunityRepositoryProvider)
+      .fetchStartupOpportunities(user.id);
 });
 
 final searchQueryProvider = StateProvider<String>((ref) => '');
 
-final selectedCategoryProvider = StateProvider<OpportunityCategory?>((ref) => null);
+final selectedCategoryProvider = StateProvider<OpportunityCategory?>(
+  (ref) => null,
+);
 
-final selectedApplicationStatusFilterProvider = StateProvider<String?>((ref) => null);
+final selectedApplicationStatusFilterProvider = StateProvider<String?>(
+  (ref) => null,
+);

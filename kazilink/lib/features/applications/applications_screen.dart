@@ -18,11 +18,16 @@ class ApplicationsScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('Your applications', style: Theme.of(context).textTheme.headlineSmall),
+            Text(
+              'Your applications',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
             const SizedBox(height: 6),
             Text(
               'Track interest submissions and status changes in one place.',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black54),
+              style: Theme.of(
+                context,
+              ).textTheme.bodyMedium?.copyWith(color: Colors.black54),
             ),
             const SizedBox(height: 16),
             SizedBox(
@@ -30,13 +35,27 @@ class ApplicationsScreen extends ConsumerWidget {
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemBuilder: (context, index) {
-                  final options = <String?>[null, 'Submitted', 'Under review', 'Shortlisted', 'Accepted', 'Rejected'];
+                  final options = <String?>[
+                    null,
+                    'Submitted',
+                    'Under review',
+                    'Shortlisted',
+                    'Accepted',
+                    'Rejected',
+                  ];
                   final item = options[index];
                   final isSelected = item == selectedStatus;
                   return ChoiceChip(
                     label: Text(item ?? 'All'),
                     selected: isSelected,
-                    onSelected: (_) => ref.read(selectedApplicationStatusFilterProvider.notifier).state = item,
+                    onSelected: (_) =>
+                        ref
+                                .read(
+                                  selectedApplicationStatusFilterProvider
+                                      .notifier,
+                                )
+                                .state =
+                            item,
                   );
                 },
                 separatorBuilder: (_, _) => const SizedBox(width: 8),
@@ -51,15 +70,19 @@ class ApplicationsScreen extends ConsumerWidget {
                     if (selectedStatus == null) {
                       return true;
                     }
-                    return application.status.toLowerCase() == selectedStatus.toLowerCase();
+                    return application.status.toLowerCase() ==
+                        selectedStatus.toLowerCase();
                   }).length,
                   separatorBuilder: (_, _) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
-                    final filteredApplications = applications.where((application) {
+                    final filteredApplications = applications.where((
+                      application,
+                    ) {
                       if (selectedStatus == null) {
                         return true;
                       }
-                      return application.status.toLowerCase() == selectedStatus.toLowerCase();
+                      return application.status.toLowerCase() ==
+                          selectedStatus.toLowerCase();
                     }).toList();
                     final application = filteredApplications[index];
                     return ApplicationCard(application: application);

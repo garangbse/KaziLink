@@ -37,16 +37,25 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Text('KaziLink', style: Theme.of(context).textTheme.displaySmall?.copyWith(fontWeight: FontWeight.w800)),
+                  Text(
+                    'KaziLink',
+                    style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
                   const SizedBox(height: 8),
                   Text(
                     'Sign in to access ALU internship opportunities, startup profiles, and application tracking.',
-                    style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: Colors.black54),
+                    style: Theme.of(
+                      context,
+                    ).textTheme.bodyLarge?.copyWith(color: Colors.black54),
                   ),
                   const SizedBox(height: 24),
                   TextField(
                     controller: _emailController,
-                    decoration: const InputDecoration(labelText: 'Email address'),
+                    decoration: const InputDecoration(
+                      labelText: 'Email address',
+                    ),
                   ),
                   const SizedBox(height: 12),
                   TextField(
@@ -58,21 +67,30 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                   FilledButton(
                     onPressed: authState.isLoading
                         ? null
-                        : () => ref.read(authControllerProvider.notifier).signIn(
-                              email: _emailController.text.trim(),
-                              password: _passwordController.text.trim(),
-                            ),
-                    child: authState.isLoading ? const CircularProgressIndicator() : const Text('Sign in'),
+                        : () => ref
+                              .read(authControllerProvider.notifier)
+                              .signIn(
+                                email: _emailController.text.trim(),
+                                password: _passwordController.text.trim(),
+                              ),
+                    child: authState.isLoading
+                        ? const CircularProgressIndicator()
+                        : const Text('Sign in'),
                   ),
                   if (authState.errorMessage != null) ...[
                     const SizedBox(height: 12),
-                    Text(authState.errorMessage!, style: const TextStyle(color: Colors.red)),
+                    Text(
+                      authState.errorMessage!,
+                      style: const TextStyle(color: Colors.red),
+                    ),
                   ],
                   const SizedBox(height: 16),
                   TextButton(
                     onPressed: () {
                       Navigator.of(context).push(
-                        MaterialPageRoute<void>(builder: (_) => const SignUpScreen()),
+                        MaterialPageRoute<void>(
+                          builder: (_) => const SignUpScreen(),
+                        ),
                       );
                     },
                     child: const Text('Don\'t have an account? Sign up'),

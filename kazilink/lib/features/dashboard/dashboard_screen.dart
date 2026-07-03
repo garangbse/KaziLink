@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/auth/auth_controller.dart';
 import '../../core/models/opportunity.dart';
 import '../../core/models/opportunity_category.dart';
 import '../../core/models/opportunity_status.dart';
+import '../../core/models/user_profile.dart';
 import '../../core/state/app_providers.dart';
 import '../../shared/widgets/feature_cards.dart';
 
@@ -37,7 +39,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
           children: [
             HeroCard(
               title: 'KaziLink',
-              subtitle: 'Match ALU students with verified startups and meaningful internships.',
+              subtitle:
+                  'Match ALU students with verified startups and meaningful internships.',
               accent: 'ALU ecosystem ready',
               onAction: () => ref.read(searchQueryProvider.notifier).state = '',
             ),
@@ -45,11 +48,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             const Row(
               children: [
                 Expanded(
-                  child: MetricTile(label: 'Verified startups', value: '24', icon: Icons.verified_outlined),
+                  child: MetricTile(
+                    label: 'Verified startups',
+                    value: '24',
+                    icon: Icons.verified_outlined,
+                  ),
                 ),
                 SizedBox(width: 12),
                 Expanded(
-                  child: MetricTile(label: 'Open roles', value: '61', icon: Icons.work_outline),
+                  child: MetricTile(
+                    label: 'Open roles',
+                    value: '61',
+                    icon: Icons.work_outline,
+                  ),
                 ),
               ],
             ),
@@ -57,16 +68,27 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             const Row(
               children: [
                 Expanded(
-                  child: MetricTile(label: 'Match rate', value: '91%', icon: Icons.insights_outlined),
+                  child: MetricTile(
+                    label: 'Match rate',
+                    value: '91%',
+                    icon: Icons.insights_outlined,
+                  ),
                 ),
                 SizedBox(width: 12),
                 Expanded(
-                  child: MetricTile(label: 'Applications', value: '128', icon: Icons.send_outlined),
+                  child: MetricTile(
+                    label: 'Applications',
+                    value: '128',
+                    icon: Icons.send_outlined,
+                  ),
                 ),
               ],
             ),
             const SizedBox(height: 24),
-            Text('Verified startup pipeline', style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              'Verified startup pipeline',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             const SizedBox(height: 12),
             startupsAsync.when(
               data: (startups) => Column(
@@ -87,7 +109,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
               ),
             ),
             const SizedBox(height: 24),
-            Text('Opportunities', style: Theme.of(context).textTheme.titleMedium),
+            Text(
+              'Opportunities',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
             const SizedBox(height: 10),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -96,19 +121,29 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                   _DashboardFilterChip(
                     label: 'All',
                     selected: _selectedFilter == DashboardOpportunityFilter.all,
-                    onTap: () => setState(() => _selectedFilter = DashboardOpportunityFilter.all),
+                    onTap: () => setState(
+                      () => _selectedFilter = DashboardOpportunityFilter.all,
+                    ),
                   ),
                   const SizedBox(width: 8),
                   _DashboardFilterChip(
                     label: 'Tech',
-                    selected: _selectedFilter == DashboardOpportunityFilter.tech,
-                    onTap: () => setState(() => _selectedFilter = DashboardOpportunityFilter.tech),
+                    selected:
+                        _selectedFilter == DashboardOpportunityFilter.tech,
+                    onTap: () => setState(
+                      () => _selectedFilter = DashboardOpportunityFilter.tech,
+                    ),
                   ),
                   const SizedBox(width: 8),
                   _DashboardFilterChip(
                     label: 'Entrepreneurship',
-                    selected: _selectedFilter == DashboardOpportunityFilter.entrepreneurship,
-                    onTap: () => setState(() => _selectedFilter = DashboardOpportunityFilter.entrepreneurship),
+                    selected:
+                        _selectedFilter ==
+                        DashboardOpportunityFilter.entrepreneurship,
+                    onTap: () => setState(
+                      () => _selectedFilter =
+                          DashboardOpportunityFilter.entrepreneurship,
+                    ),
                   ),
                 ],
               ),
@@ -116,11 +151,15 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             const SizedBox(height: 12),
             opportunitiesAsync.when(
               data: (opportunities) {
-                final filteredOpportunities = opportunities.where(_matchesFilter).take(3).toList();
+                final filteredOpportunities = opportunities
+                    .where(_matchesFilter)
+                    .take(3)
+                    .toList();
                 if (filteredOpportunities.isEmpty) {
                   return const StateCard(
                     title: 'No opportunities found',
-                    subtitle: 'Try switching the filter to see more internships.',
+                    subtitle:
+                        'Try switching the filter to see more internships.',
                     icon: Icons.search_off_outlined,
                   );
                 }
@@ -132,7 +171,8 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                           padding: const EdgeInsets.only(bottom: 12),
                           child: DashboardOpportunityCard(
                             opportunity: opportunity,
-                            onTap: () => _showOpportunityDetails(context, opportunity),
+                            onTap: () =>
+                                _showOpportunityDetails(context, opportunity),
                           ),
                         ),
                       )
@@ -157,17 +197,18 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
       DashboardOpportunityFilter.all => true,
       DashboardOpportunityFilter.tech =>
         opportunity.category == OpportunityCategory.development ||
-        opportunity.category == OpportunityCategory.design ||
-        opportunity.category == OpportunityCategory.research,
+            opportunity.category == OpportunityCategory.design ||
+            opportunity.category == OpportunityCategory.research,
       DashboardOpportunityFilter.entrepreneurship =>
         opportunity.category == OpportunityCategory.marketing ||
-        opportunity.category == OpportunityCategory.operations ||
-        opportunity.category == OpportunityCategory.community,
+            opportunity.category == OpportunityCategory.operations ||
+            opportunity.category == OpportunityCategory.community,
     };
   }
 
   void _showOpportunityDetails(BuildContext context, Opportunity opportunity) {
     final repository = ref.read(opportunityRepositoryProvider);
+    final user = ref.read(authControllerProvider).user;
 
     showModalBottomSheet<void>(
       context: context,
@@ -189,9 +230,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(opportunity.title, style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w800)),
+                Text(
+                  opportunity.title,
+                  style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
                 const SizedBox(height: 6),
-                Text('${opportunity.startupName} · ${opportunity.category.label}', style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black54)),
+                Text(
+                  '${opportunity.startupName} · ${opportunity.category.label}',
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyMedium?.copyWith(color: Colors.black54),
+                ),
                 const SizedBox(height: 16),
                 Row(
                   children: [
@@ -219,50 +270,105 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
                 const SizedBox(height: 18),
                 Row(
                   children: [
-                    Expanded(child: _detailInfo(context, Icons.location_on_outlined, opportunity.location)),
+                    Expanded(
+                      child: _detailInfo(
+                        context,
+                        Icons.location_on_outlined,
+                        opportunity.location,
+                      ),
+                    ),
                     const SizedBox(width: 8),
-                    Expanded(child: _detailInfo(context, Icons.schedule_outlined, opportunity.mode)),
+                    Expanded(
+                      child: _detailInfo(
+                        context,
+                        Icons.schedule_outlined,
+                        opportunity.mode,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 8),
-                _detailInfo(context, Icons.payments_outlined, opportunity.compensation),
+                _detailInfo(
+                  context,
+                  Icons.payments_outlined,
+                  opportunity.compensation,
+                ),
                 const SizedBox(height: 20),
                 Row(
                   children: [
                     Expanded(
                       child: FilledButton.icon(
-                        onPressed: opportunity.status == OpportunityStatus.closed
+                        onPressed:
+                            opportunity.status == OpportunityStatus.closed ||
+                                user?.role != UserRole.student
                             ? null
                             : () async {
-                                await repository.submitInterest(opportunity.id);
-                                if (context.mounted) {
-                                  ref.invalidate(applicationsProvider);
-                                  ScaffoldMessenger.of(context).showSnackBar(
-                                    SnackBar(content: Text('Interest submitted for ${opportunity.title}')),
+                                if (user == null) {
+                                  return;
+                                }
+                                try {
+                                  await repository.submitApplication(
+                                    opportunityId: opportunity.id,
+                                    student: user,
                                   );
-                                  Navigator.of(context).pop();
+                                  if (context.mounted) {
+                                    ref.invalidate(applicationsProvider);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(
+                                          'Application submitted for ${opportunity.title}',
+                                        ),
+                                      ),
+                                    );
+                                    Navigator.of(context).pop();
+                                  }
+                                } catch (error) {
+                                  if (context.mounted) {
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(content: Text('$error')),
+                                    );
+                                  }
                                 }
                               },
                         icon: const Icon(Icons.send_outlined),
-                        label: Text(opportunity.status == OpportunityStatus.closed ? 'Closed' : 'Apply now'),
+                        label: Text(
+                          opportunity.status == OpportunityStatus.closed
+                              ? 'Closed'
+                              : 'Apply now',
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),
                     IconButton.filledTonal(
-                      onPressed: () async {
-                        await repository.toggleBookmark(opportunity.id);
-                        if (context.mounted) {
-                          ref.invalidate(opportunitiesProvider);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(
-                                opportunity.bookmarked ? 'Bookmark removed' : 'Bookmarked',
-                              ),
-                            ),
-                          );
-                        }
-                      },
-                      icon: Icon(opportunity.bookmarked ? Icons.bookmark : Icons.bookmark_border),
+                      onPressed: user?.role != UserRole.student
+                          ? null
+                          : () async {
+                              final student = user;
+                              if (student == null) {
+                                return;
+                              }
+                              await repository.toggleBookmark(
+                                userId: student.id,
+                                opportunityId: opportunity.id,
+                              );
+                              if (context.mounted) {
+                                ref.invalidate(opportunitiesProvider);
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(
+                                      opportunity.bookmarked
+                                          ? 'Bookmark removed'
+                                          : 'Bookmarked',
+                                    ),
+                                  ),
+                                );
+                              }
+                            },
+                      icon: Icon(
+                        opportunity.bookmarked
+                            ? Icons.bookmark
+                            : Icons.bookmark_border,
+                      ),
                     ),
                   ],
                 ),
@@ -286,9 +392,19 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+        Text(
+          title,
+          style: Theme.of(
+            context,
+          ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+        ),
         const SizedBox(height: 6),
-        Text(body, style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.black87, height: 1.45)),
+        Text(
+          body,
+          style: Theme.of(
+            context,
+          ).textTheme.bodyMedium?.copyWith(color: Colors.black87, height: 1.45),
+        ),
       ],
     );
   }
@@ -304,7 +420,9 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         children: [
           Icon(icon, size: 16, color: Colors.black54),
           const SizedBox(width: 6),
-          Expanded(child: Text(text, maxLines: 2, overflow: TextOverflow.ellipsis)),
+          Expanded(
+            child: Text(text, maxLines: 2, overflow: TextOverflow.ellipsis),
+          ),
         ],
       ),
     );
@@ -317,13 +435,23 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
         color: const Color(0xFFE8F0FF),
         borderRadius: BorderRadius.circular(999),
       ),
-      child: Text(text, style: Theme.of(context).textTheme.labelMedium?.copyWith(color: const Color(0xFF0B5FFF), fontWeight: FontWeight.w700)),
+      child: Text(
+        text,
+        style: Theme.of(context).textTheme.labelMedium?.copyWith(
+          color: const Color(0xFF0B5FFF),
+          fontWeight: FontWeight.w700,
+        ),
+      ),
     );
   }
 }
 
 class _DashboardFilterChip extends StatelessWidget {
-  const _DashboardFilterChip({required this.label, required this.selected, required this.onTap});
+  const _DashboardFilterChip({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
 
   final String label;
   final bool selected;
@@ -339,14 +467,18 @@ class _DashboardFilterChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: selected ? const Color(0xFF0B5FFF) : Colors.white,
           borderRadius: BorderRadius.circular(999),
-          border: Border.all(color: selected ? const Color(0xFF0B5FFF) : Colors.black.withValues(alpha: 0.08)),
+          border: Border.all(
+            color: selected
+                ? const Color(0xFF0B5FFF)
+                : Colors.black.withValues(alpha: 0.08),
+          ),
         ),
         child: Text(
           label,
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
-                color: selected ? Colors.white : Colors.black87,
-                fontWeight: FontWeight.w700,
-              ),
+            color: selected ? Colors.white : Colors.black87,
+            fontWeight: FontWeight.w700,
+          ),
         ),
       ),
     );
@@ -354,7 +486,11 @@ class _DashboardFilterChip extends StatelessWidget {
 }
 
 class DashboardOpportunityCard extends StatelessWidget {
-  const DashboardOpportunityCard({required this.opportunity, required this.onTap, super.key});
+  const DashboardOpportunityCard({
+    required this.opportunity,
+    required this.onTap,
+    super.key,
+  });
 
   final Opportunity opportunity;
   final VoidCallback onTap;
@@ -389,11 +525,18 @@ class DashboardOpportunityCard extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(opportunity.title, style: Theme.of(context).textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+                    Text(
+                      opportunity.title,
+                      style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                     const SizedBox(height: 4),
                     Text(
                       '${opportunity.startupName} · ${opportunity.location}',
-                      style: Theme.of(context).textTheme.bodySmall?.copyWith(color: Colors.black54),
+                      style: Theme.of(
+                        context,
+                      ).textTheme.bodySmall?.copyWith(color: Colors.black54),
                     ),
                     const SizedBox(height: 8),
                     Wrap(
@@ -423,7 +566,12 @@ class DashboardOpportunityCard extends StatelessWidget {
         color: const Color(0xFFF7F9FD),
         borderRadius: BorderRadius.circular(999),
       ),
-      child: Text(label, style: Theme.of(context).textTheme.labelSmall?.copyWith(color: Colors.black87)),
+      child: Text(
+        label,
+        style: Theme.of(
+          context,
+        ).textTheme.labelSmall?.copyWith(color: Colors.black87),
+      ),
     );
   }
 }
