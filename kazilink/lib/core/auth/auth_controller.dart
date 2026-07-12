@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
+import 'package:firebase_auth/firebase_auth.dart';
 import '../models/user_profile.dart';
 import '../state/app_providers.dart';
 
@@ -46,6 +46,38 @@ class AuthController extends StateNotifier<AuthState> {
 
   final Ref _ref;
 
+    String _parseAuthError(Object error) {
+    if (error is FirebaseAuthException) {
+      switch (error.code) {
+        case 'invalid-email':
+          return 'The email address is not valid.';
+        case 'user-disabled':
+          return 'This account has been disabled.';
+        case 'user-not-found':
+        case 'wrong-password':
+        case 'invalid-credential': 
+          return 'Wrong credentials entered. Please check your email and password.';
+        case 'email-already-in-use':
+          return 'An account already exists with this email.';
+        case 'weak-password':
+          return 'The password is too weak. Please use a stronger password.';
+        case 'too-many-requests':
+          return 'Too many attempts. Please try again later.';
+        default:
+          return 'An unexpected error occurred. Please try again.';
+      }
+    }
+    
+    final errorString = error.toString().toLowerCase();
+    if (errorString.contains('wrong-password') || 
+        errorString.contains('invalid-credential') || 
+        errorString.contains('user-not-found')) {
+      return 'Wrong credentials entered. Please check your email and password.';
+    }
+
+    return 'An unexpected error occurred. Please try again.'; 
+  }
+
   Future<void> loadSession() async {
     try {
       final user = await _ref.read(authRepositoryProvider).loadCurrentUser();
@@ -54,7 +86,7 @@ class AuthController extends StateNotifier<AuthState> {
       state = AuthState(
         isLoading: false,
         user: null,
-        errorMessage: error.toString(),
+        errorMessage: _parseAuthError(error),
       );
     }
   }
@@ -70,7 +102,7 @@ class AuthController extends StateNotifier<AuthState> {
       state = AuthState(
         isLoading: false,
         user: null,
-        errorMessage: error.toString(),
+        errorMessage: _parseAuthError(error),
       );
     }
   }
@@ -86,7 +118,7 @@ class AuthController extends StateNotifier<AuthState> {
       state = AuthState(
         isLoading: false,
         user: null,
-        errorMessage: error.toString(),
+        errorMessage: _parseAuthError(error),
       );
     }
   }
