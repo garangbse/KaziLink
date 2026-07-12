@@ -22,7 +22,6 @@ class ProfileScreen extends ConsumerWidget {
             roleLabel: authState.user?.role.label ?? 'Student',
           ),
           const SizedBox(height: 20),
-          SectionTitle(title: 'Workflow notes'),
           const SizedBox(height: 12),
           const SizedBox(height: 16),
           FilledButton.tonalIcon(
