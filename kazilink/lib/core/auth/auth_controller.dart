@@ -156,3 +156,4 @@ class AuthController extends StateNotifier<AuthState> {
     state = const AuthState(isLoading: false, user: null, errorMessage: null);
   }
 }
+
