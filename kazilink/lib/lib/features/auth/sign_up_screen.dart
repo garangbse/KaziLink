@@ -2,23 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/auth/auth_controller.dart';
-import 'sign_up_screen.dart';
 
-class SignInScreen extends ConsumerStatefulWidget {
-  const SignInScreen({super.key});
+class SignUpScreen extends ConsumerStatefulWidget {
+  const SignUpScreen({super.key});
 
   @override
-  ConsumerState<SignInScreen> createState() => _SignInScreenState();
+  ConsumerState<SignUpScreen> createState() => _SignUpScreenState();
 }
 
-class _SignInScreenState extends ConsumerState<SignInScreen> {
-  final _emailController = TextEditingController(text: 'student@alustudent.com');
-  final _passwordController = TextEditingController(text: 'password123');
+class _SignUpScreenState extends ConsumerState<SignUpScreen> {
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+  final _confirmPasswordController = TextEditingController();
 
   @override
   void dispose() {
     _emailController.dispose();
     _passwordController.dispose();
+    _confirmPasswordController.dispose();
     super.dispose();
   }
 
@@ -27,25 +28,25 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
     final authState = ref.watch(authControllerProvider);
 
     return Scaffold(
+      appBar: AppBar(),
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 480),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'KaziLink',
+                    'Create account',
                     style: Theme.of(context).textTheme.displaySmall?.copyWith(
                       fontWeight: FontWeight.w800,
                     ),
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'Sign in to access ALU internship opportunities, startup profiles, and application tracking.',
+                    'Create your KaziLink account to access internships and startup opportunities.',
                     style: Theme.of(
                       context,
                     ).textTheme.bodyLarge?.copyWith(color: Colors.black54),
@@ -53,6 +54,7 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                   const SizedBox(height: 24),
                   TextField(
                     controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
                     decoration: const InputDecoration(
                       labelText: 'Email address',
                     ),
@@ -63,19 +65,41 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                     obscureText: true,
                     decoration: const InputDecoration(labelText: 'Password'),
                   ),
+                  const SizedBox(height: 12),
+                  TextField(
+                    controller: _confirmPasswordController,
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      labelText: 'Confirm password',
+                    ),
+                  ),
                   const SizedBox(height: 20),
                   FilledButton(
                     onPressed: authState.isLoading
                         ? null
-                        : () => ref
-                              .read(authControllerProvider.notifier)
-                              .signIn(
-                                email: _emailController.text.trim(),
-                                password: _passwordController.text.trim(),
-                              ),
+                        : () async {
+                            final email = _emailController.text.trim();
+                            final password = _passwordController.text.trim();
+                            final confirmPassword = _confirmPasswordController
+                                .text
+                                .trim();
+
+                            if (password != confirmPassword) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Passwords do not match'),
+                                ),
+                              );
+                              return;
+                            }
+
+                            await ref
+                                .read(authControllerProvider.notifier)
+                                .signUp(email: email, password: password);
+                          },
                     child: authState.isLoading
                         ? const CircularProgressIndicator()
-                        : const Text('Sign in'),
+                        : const Text('Sign up'),
                   ),
                   if (authState.errorMessage != null) ...[
                     const SizedBox(height: 12),
@@ -84,17 +108,6 @@ class _SignInScreenState extends ConsumerState<SignInScreen> {
                       style: const TextStyle(color: Colors.red),
                     ),
                   ],
-                  const SizedBox(height: 16),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute<void>(
-                          builder: (_) => const SignUpScreen(),
-                        ),
-                      );
-                    },
-                    child: const Text('Don\'t have an account? Sign up'),
-                  ),
                 ],
               ),
             ),
